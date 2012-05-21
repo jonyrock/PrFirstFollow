@@ -3,8 +3,7 @@ module FFL (
     readRule,
     first1,
     follow1,
-    haveEmpty,
-    genStrings
+    haveEmpty
 ) where
 
 import Data.Char
@@ -12,10 +11,18 @@ import Data.List
 import Data.Maybe
 import Debug.Trace
 
-rtest = [Rule 'S' "AC",Rule 'A' "abC",
-         Rule 'A' "bB",Rule 'B' "b",Rule 'C' "c",Rule 'C' "&"]
+data Rule = Rule
+   { ruleHead :: Char
+   , ruleText :: String
+   } deriving Show
 
-findPostfix s r = drop 1 $ dropWhile (/=s) r
+readRule (n:':':xs) = Rule n xs
+firstNTerm = dropWhile (\x-> x == '&' || isTerm x)
+findRules s = (map ruleText) . (filter ((s==) . ruleHead))
+
+isTerm c = isLower c || elem c "()+-*/="
+removeEmpty = filter (/='&')
+
 
 follow1 rules a = sort $ nub $ removeEmpty $ follow a [] []
     where 
@@ -35,30 +42,6 @@ follow1 rules a = sort $ nub $ removeEmpty $ follow a [] []
             in
                 (if s == 'S' then ['$'] else []) ++ openTopFollow ++ openSuffics
           
-
-
-data Rule = Rule Char String deriving Show
-
-readRule (n:':':xs) = Rule n xs
-ruleHead (Rule h _) = h
-ruleText (Rule _ t) = t
-firstNTerm = dropWhile (\x-> x == '&' || isTerm x)
-findRules s = (map ruleText) . (filter ((s==) . ruleHead))
-
-isTerm c = isLower c || elem c "()+-*/="
-removeEmpty = filter (/='&')
-
-genStrings rules = openStr "S" 
-    where openStr s = let 
-                        opened = concat $ map (\x-> if isUpper x 
-                                   then findRules x rules 
-                                   else [[x]]) s 
-                        step1 = (filter ((==[]) . firstNTerm) opened)
-                        toOpen = (filter ((/=[]) . firstNTerm) opened)
-                    in
-
-                        step1 ++ (concat $ map openStr toOpen)
-
 
 first1 rules str = nub $ sort $ first str [] []
     where 
@@ -82,17 +65,6 @@ first1 rules str = nub $ sort $ first str [] []
                                                    else []
 
                                     ) xs
-
-addToCash (c, els) xs = if find ((==c) . fst) xs == Nothing then (c,els):xs
-                        else map (\(a,b) -> 
-                                    if a==c then (a, nub $ b++els) 
-                                    else (a,b)) xs
-findValueCash c xs = let v = find ((==c) . fst) xs in
-                     if v == Nothing then []
-                     else snd $ fromJust v
-
-
-                    
 
 haveEmpty rules xs = haveEmpty' rules xs []
 haveEmpty' rules (s:ss) visited 
