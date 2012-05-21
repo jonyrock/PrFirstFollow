@@ -1,0 +1,10 @@
+S:ACE
+A:S
+A:&
+A:abC
+A:bB
+B:b
+B:b
+C:&
+C:cC
+E:e
