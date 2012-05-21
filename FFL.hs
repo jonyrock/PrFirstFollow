@@ -24,10 +24,10 @@ isTerm c = isLower c || elem c "()+-*/="
 removeEmpty = filter (/='&')
 
 
-follow1 rules a = sort $ nub $ removeEmpty $ follow a [] []
+follow1 rules a = sort $ nub $ removeEmpty $ follow a [] '$'
     where 
           follow s acc visited = 
-            let newRules = filter (\r -> not $ elem (ruleHead r) visited) rules
+            let newRules = filter (\r -> (ruleHead r) /= visited) rules
                 cutted = filter ((/=[]) . ruleText) (map (\r -> 
                     Rule (ruleHead r) (dropWhile (/=s) $ ruleText r)) 
                          newRules)
@@ -35,7 +35,7 @@ follow1 rules a = sort $ nub $ removeEmpty $ follow a [] []
                                 length (ruleText r) == 1 || 
                                 haveEmpty rules (drop 1 (ruleText r))) cutted
                 openTopFollow = concat $ map (\r -> 
-                                        follow r [] ([s])) needTopFollow
+                                        follow r [] s) needTopFollow
                 haveSuffics = map ((drop 1) . ruleText) $
                               filter (\r -> length (ruleText r) > 1) cutted
                 openSuffics = concat $ map (\r -> first1 rules r) haveSuffics
