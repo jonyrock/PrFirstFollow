@@ -20,11 +20,7 @@ readRule (n:':':xs) = Rule n xs
 firstNTerm = dropWhile (\x-> x == '&' || isTerm x)
 findRules s = (map ruleText) . (filter ((s==) . ruleHead))
 findNewRules visited s rules = 
-    findRules s $ 
-    (filter ( \ru -> 
-    let r = ruleText ru in
-    firstNTerm r == [] || (not $ elem (head (firstNTerm r)) visited)
-    ) (map removeMaybeEmpty rules)) 
+    findRules s $ map removeMaybeEmpty rules
     where removeMaybeEmpty (Rule h t) = 
                Rule h $ concatMap (\c -> if elem c visited 
                                  then if haveEmpty rules [c] 

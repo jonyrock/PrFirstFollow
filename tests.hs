@@ -56,9 +56,8 @@ testFirst1 = do
             (testOK $ first1 rules "CA" == ['a', 'b', 'c'])
         putStrLn $ "t2: First1(S) = {a, b, c, e}: " ++ 
             (testOK $ first1 rules2 "S" == ['a', 'b', 'c', 'e'])
-        putStrLn $  "t3: First(E) = {(, i}: " ++ 
-            {--(testOK  $ --} (first1 rules3 "E") -- == ['(', 'i'])
-        
+        putStrLn $ "t3: First(E) = {(, i}: " 
+            ++ (testOK $ (first1 rules3 "E") == ['(', 'i'])
         putStrLn $ "t3: First(T) = {(, i}: " 
             ++ (testOK $ (first1 rules3 "T") == ['(', 'i'])
         putStrLn $ "t3: First(S) = {(, i}: " 
