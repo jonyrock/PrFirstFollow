@@ -1,8 +1,0 @@
-S:(E)
-S:i
-E:TR
-R:+TR
-R:&
-T:SY
-Y:*SY
-Y:&
