@@ -19,6 +19,17 @@ data Rule = Rule
 readRule (n:':':xs) = Rule n xs
 firstNTerm = dropWhile (\x-> x == '&' || isTerm x)
 findRules s = (map ruleText) . (filter ((s==) . ruleHead))
+findNewRules visited s rules = 
+    findRules s $ 
+    (filter ( \ru -> 
+    let r = ruleText ru in
+    firstNTerm r == [] || (not $ elem (head (firstNTerm r)) visited)
+    ) (map removeMaybeEmpty rules)) 
+    where removeMaybeEmpty (Rule h t) = 
+               Rule h $ concatMap (\c -> if elem c visited 
+                                 then if haveEmpty rules [c] 
+                                      then [] else [c]
+                                 else [c]) t
 
 isTerm c = isLower c || elem c "()+-*/="
 removeEmpty = filter (/='&')
@@ -27,6 +38,7 @@ removeEmpty = filter (/='&')
 follow1 rules a = sort $ nub $ removeEmpty $ follow a [] '$' -- '$' means nothing
     where 
           follow s acc visited = 
+            
             let newRules = filter (\r -> (ruleHead r) /= visited) rules
                 cutted = filter ((/=[]) . ruleText) (map (\r -> 
                     Rule (ruleHead r) (dropWhile (/=s) $ ruleText r)) 
@@ -43,20 +55,20 @@ follow1 rules a = sort $ nub $ removeEmpty $ follow a [] '$' -- '$' means nothin
                 (if s == 'S' then ['$'] else []) ++ openTopFollow ++ openSuffics
           
 
-first1 rules str = nub $ sort $ first str [] []
+first1 rules str =  nub $ sort $ first str [] []
     where 
     first [] acc _ = acc
     first (s:ss) acc visited
             | (s:ss) == "&" = '&':acc
             | isTerm  s = s:acc
-            | ss == [] = openRules $ findRules s rules
+            | ss == [] = openRules $ findNewRules visited s rules
             | not $ haveEmpty rules [s] = first [s] acc (s:visited)
             | True = removeEmpty (first [s] acc (s:visited)) ++
                      (first ss acc (s:visited))
                 where 
                     openRules xs = 
                         let maybeNews = findNews xs in
-                        concatMap (\x-> first x acc (s:visited)) maybeNews 
+                        concat $ map (\x-> first x acc (s:visited)) maybeNews 
                     findNews xs = fmap (
                                     \(a:ab)-> if not $ elem a visited
                                               then a:ab
@@ -67,8 +79,11 @@ first1 rules str = nub $ sort $ first str [] []
                                     ) xs
 
 haveEmpty rules xs = haveEmpty' rules xs []
+haveEmpty' _ [] _ = True
 haveEmpty' rules (s:ss) visited 
     | (s:ss) == "&" = True
+    | (s:ss) == "&" = True
+    | s == '&'      = haveEmpty' rules ss visited
     | isTerm s      = False
     | ss == []      = hv $ filter ( (==Nothing) . find isTerm) (findRules s rules)
     | True = (haveEmpty' rules [s] visited) && (haveEmpty' rules ss (s:visited))

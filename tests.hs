@@ -7,11 +7,11 @@ readRulesFromFile fileName = do
     let rules = map readRule $ takeWhile (/="---------") cLines
     return rules
 
-rulesTest1 = readRulesFromFile "gr1.txt"
-rulesTest2 = readRulesFromFile "gr2.txt"
-rulesTest3 = readRulesFromFile "gr3.txt"
-rulesTest4 = readRulesFromFile "gr4.txt"
-rulesTest5 = readRulesFromFile "gr5.txt"
+rulesTest1 = readRulesFromFile "tests/gr1.txt"
+rulesTest2 = readRulesFromFile "tests/gr2.txt"
+rulesTest3 = readRulesFromFile "tests/gr3.txt"
+rulesTest4 = readRulesFromFile "tests/gr4.txt"
+rulesTest5 = readRulesFromFile "tests/gr5.txt"
 
 testOK True = "OK"
 testOK False = "FAIL"
@@ -31,13 +31,19 @@ testHaveEmpty = do
         ++ (testOK $ (haveEmpty rules2 "ACCAA") == True)
     putStrLn $ "t2: ABAC -> e (False): " 
         ++ (testOK $ (haveEmpty rules2 "ABAC") == False)
+    putStrLn $ "t2: &ABAC -> e (False): " 
+        ++ (testOK $ (haveEmpty rules2 "$ABAC") == False)
     putStrLn $ "t2: AAA -> e (True): " 
         ++ (testOK $ (haveEmpty rules2 "AAA") == True)        
-  
+    putStrLn $ "t2: &AAA -> e (True): " 
+        ++ (testOK $ (haveEmpty rules2 "&AAA") == True)
 
 testFirst1 = do
         rules <- rulesTest1
         rules2 <- rulesTest2
+        rules3 <- rulesTest3
+        rules5 <- rulesTest5
+        
         putStrLn $ "t1: First1(ab) = {a}: " ++ 
          (testOK $ first1 rules "ab" == ['a'])
         putStrLn $ "t1: First1(&) = {&}: " ++ 
@@ -50,9 +56,9 @@ testFirst1 = do
             (testOK $ first1 rules "CA" == ['a', 'b', 'c'])
         putStrLn $ "t2: First1(S) = {a, b, c, e}: " ++ 
             (testOK $ first1 rules2 "S" == ['a', 'b', 'c', 'e'])
-        rules3 <- rulesTest3
-        putStrLn $ "t3: First(E) = {(, i}: " 
-            ++ (testOK $ (first1 rules3 "E") == ['(', 'i'])
+        putStrLn $  "t3: First(E) = {(, i}: " ++ 
+            {--(testOK  $ --} (first1 rules3 "E") -- == ['(', 'i'])
+        
         putStrLn $ "t3: First(T) = {(, i}: " 
             ++ (testOK $ (first1 rules3 "T") == ['(', 'i'])
         putStrLn $ "t3: First(S) = {(, i}: " 
@@ -61,6 +67,8 @@ testFirst1 = do
             ++ (testOK $ (first1 rules3 "R") == ['&', '+'])
         putStrLn $ "t3: First(Y) = {&, *}: " 
             ++ (testOK $ (first1 rules3 "Y") == ['&', '*'])
+        putStrLn $ "t5: First(S) = {&, a, b}: " ++
+             (testOK $ (first1 rules5 "S") == ['&', 'a', 'b']) 
 
 testFollow1 = do
         rules1 <- rulesTest1
@@ -88,10 +96,13 @@ testFollow1 = do
         putStrLn $ "t4: Follow(Y) = {$, ), +}: " 
             ++ (testOK $ (follow1 rules4 'Y') == ['$', ')', '+'])
         putStrLn $ "t4: Follow(F) = {$, ), *, +}: " 
-            ++ (testOK $ (follow1 rules4 'F') == ['$', ')', '*', '+'])         
---        putStrLn $ (follow1 rules5 'A')
-        putStrLn $ "t5: Follow(A) = {$}: " 
-            ++ (testOK $ (follow1 rules5 'A') == ['$'])
+            ++ (testOK $ (follow1 rules4 'F') == ['$', ')', '*', '+'])
+        putStrLn $ "t5: Follow(S) = {$, a, b}: " 
+            ++ (testOK $ (follow1 rules5 'S') == ['$', 'a', 'b'])
+
+testFollow1p = do
+               rules5 <- rulesTest5
+               putStrLn $ (follow1 rules5 'S')
             
             
             
