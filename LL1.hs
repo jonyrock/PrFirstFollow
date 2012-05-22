@@ -8,4 +8,4 @@ main = do
     when (null args) $ error "Need input file with grammar"
     let a = head args
     rules <- readRulesFromFile a
-    return ()
+    putStrLn $ show $ isLL1 rules

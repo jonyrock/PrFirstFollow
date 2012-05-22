@@ -1,3 +1,4 @@
+module Tests where
 import System.IO
 import FFL
 import Utils
