@@ -1,0 +1,8 @@
+S:TR
+R:+TR
+R:&
+T:FY
+Y:*FY
+Y:&
+F:(S)
+F:i
