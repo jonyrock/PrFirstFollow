@@ -1,11 +1,6 @@
 import System.IO
 import FFL
-
-readRulesFromFile fileName = do  
-    content <- readFile fileName
-    let cLines = lines content
-    let rules = map readRule $ takeWhile (/="---------") cLines
-    return rules
+import Utils
 
 rulesTest1 = readRulesFromFile "tests/gr1.txt"
 rulesTest2 = readRulesFromFile "tests/gr2.txt"
@@ -16,6 +11,12 @@ rulesTest6 = readRulesFromFile "tests/gr6.txt"
 
 testOK True = "OK"
 testOK False = "FAIL"
+
+tests = do 
+        testHaveEmpty
+        testFirst1
+        testFollow1
+        testLL1
 
 testHaveEmpty = do
     rules1 <- rulesTest1
@@ -108,12 +109,12 @@ testLL1 = do
         rules4 <- rulesTest4
         rules5 <- rulesTest5
         rules6 <- rulesTest6
-        putStrLn $ "t1: False? " ++ (testOK $ isLL1 rules1 == False)
-        putStrLn $ "t2: False? " ++ (testOK $ isLL1 rules2 == False)
-        putStrLn $ "t3: True?  " ++ (testOK $ isLL1 rules3 == True)
-        putStrLn $ "t4: True?  " ++ (testOK $ isLL1 rules4 == True)
-        putStrLn $ "t5: False? " ++ (testOK $ isLL1 rules5 == False)
-        putStrLn $ "t6: False? " ++ (testOK $ isLL1 rules6 == False)            
+        putStrLn $ "t1: LL_1(g1) = False? " ++ (testOK $ isLL1 rules1 == False)
+        putStrLn $ "t2: LL_1(g2) = False? " ++ (testOK $ isLL1 rules2 == False)
+        putStrLn $ "t3: LL_1(g3) = True?  " ++ (testOK $ isLL1 rules3 == True)
+        putStrLn $ "t4: LL_1(g4) = True?  " ++ (testOK $ isLL1 rules4 == True)
+        putStrLn $ "t5: LL_1(g5) = False? " ++ (testOK $ isLL1 rules5 == False)
+        putStrLn $ "t6: LL_1(g6) = False? " ++ (testOK $ isLL1 rules6 == False)
             
             
             
