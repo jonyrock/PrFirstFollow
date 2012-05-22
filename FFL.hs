@@ -1,6 +1,7 @@
 
 module FFL (
     readRule,
+    isLL1,
     first1,
     follow1,
     haveEmpty
@@ -14,7 +15,16 @@ import Debug.Trace
 data Rule = Rule
    { ruleHead :: Char
    , ruleText :: String
-   } deriving Show
+   } deriving (Show, Eq, Ord)
+
+isLL1 rules = all (==True) $ [ intersectBy (==) 
+                             (select rules x) (select rules y) == [] 
+                             | x <- rules, y <- rules 
+                             , x < y , ruleHead x == ruleHead y ]
+
+select rules (Rule r t) 
+    | not $ haveEmpty rules t = first1 rules t
+    | True = nub $ (removeEmpty $ first1 rules t) ++ follow1 rules r
 
 readRule (n:':':xs) = Rule n xs
 firstNTerm = dropWhile (\x-> x == '&' || isTerm x)

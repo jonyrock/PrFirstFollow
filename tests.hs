@@ -12,6 +12,7 @@ rulesTest2 = readRulesFromFile "tests/gr2.txt"
 rulesTest3 = readRulesFromFile "tests/gr3.txt"
 rulesTest4 = readRulesFromFile "tests/gr4.txt"
 rulesTest5 = readRulesFromFile "tests/gr5.txt"
+rulesTest6 = readRulesFromFile "tests/gr6.txt"
 
 testOK True = "OK"
 testOK False = "FAIL"
@@ -99,10 +100,20 @@ testFollow1 = do
         putStrLn $ "t5: Follow(S) = {$, a, b}: " 
             ++ (testOK $ (follow1 rules5 'S') == ['$', 'a', 'b'])
 
-testFollow1p = do
-               rules5 <- rulesTest5
-               putStrLn $ (follow1 rules5 'S')
-            
+
+testLL1 = do
+        rules1 <- rulesTest1
+        rules2 <- rulesTest2
+        rules3 <- rulesTest3
+        rules4 <- rulesTest4
+        rules5 <- rulesTest5
+        rules6 <- rulesTest6
+        putStrLn $ "t1: False? " ++ (testOK $ isLL1 rules1 == False)
+        putStrLn $ "t2: False? " ++ (testOK $ isLL1 rules2 == False)
+        putStrLn $ "t3: True?  " ++ (testOK $ isLL1 rules3 == True)
+        putStrLn $ "t4: True?  " ++ (testOK $ isLL1 rules4 == True)
+        putStrLn $ "t5: False? " ++ (testOK $ isLL1 rules5 == False)
+        putStrLn $ "t6: False? " ++ (testOK $ isLL1 rules6 == False)            
             
             
             
