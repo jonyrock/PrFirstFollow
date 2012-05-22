@@ -1,10 +1,11 @@
 import System.Environment
+import Control.Monad
 import FFL
 import Utils
 
 main = do
     args <- getArgs
-    if args == [] then error "Need input file with grammar" else return ()
+    when (null args) $ error "Need input file with grammar"
     let a = head args
     rules <- readRulesFromFile a
     return ()
